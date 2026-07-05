@@ -3,12 +3,19 @@ import Link from "next/link";
 import { Sparkles, CalendarPlus, History, ArrowRight } from "lucide-react";
 
 import { auth } from "@/auth/auth";
+import { normalizeRole } from "@/lib/roles";
 import { prisma } from "@/prisma/prisma";
 import { Greeting, EmployeeStats } from "@/components/employee";
 import { Card, CardContent } from "@/components/ui/card";
+import { redirect } from "next/navigation";
 
 export default async function EmployeePage() {
   const session = await auth.api.getSession({ headers: await headers() });
+
+  if (normalizeRole(session?.user?.role) === "ADMIN") {
+    redirect("/admin");
+  }
+
   const firstName = session!.user.name.split(" ")[0];
 
   const balances = await prisma.user.findUniqueOrThrow({
