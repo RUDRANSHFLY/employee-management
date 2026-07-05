@@ -184,7 +184,7 @@ export function AdminRequestsTable({
           return (
             <button
               key={tab.key}
-              onClick={() => setStatusFilter(tab.key as any)}
+              onClick={() => setStatusFilter(tab.key as typeof statusFilter)}
               className="relative pb-3 text-sm font-medium transition-colors text-muted-foreground hover:text-foreground shrink-0 flex items-center gap-1.5 cursor-pointer"
             >
               <span className={isActive ? "text-foreground font-semibold" : ""}>{tab.label}</span>
@@ -369,7 +369,7 @@ export function AdminRequestsTable({
                   {errorId === req.id && (
                     <div className="px-5 py-2.5 bg-rose-500/10 border-t border-rose-500/20 text-xs text-rose-600 dark:text-rose-400 flex items-center gap-1.5 font-medium">
                       <XCircle className="h-3.5 w-3.5" />
-                      Failed to process request. The employee's leave balance may be insufficient or there was a system error. Please retry.
+                      Failed to process request. The employee&apos;s leave balance may be insufficient or there was a system error. Please retry.
                     </div>
                   )}
                 </motion.div>
