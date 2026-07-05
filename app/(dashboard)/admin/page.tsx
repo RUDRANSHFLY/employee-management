@@ -1,8 +1,18 @@
+import { auth } from "@/auth/auth";
 import { prisma } from "@/prisma/prisma";
 import { AdminProfile, AdminRequestsTable, AdminStats } from "@/components/admin";
+import { normalizeRole } from "@/lib/roles";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 import { Sparkles } from "lucide-react";
 
 export default async function AdminPage() {
+  const session = await auth.api.getSession({ headers: await headers() });
+
+  if (normalizeRole(session?.user?.role) !== "ADMIN") {
+    redirect("/employee");
+  }
+
   const [pendingCount, approvedCount, rejectedCount, employeeCount, requests] =
     await Promise.all([
       prisma.leaveRequest.count({ where: { status: "PENDING" } }),
