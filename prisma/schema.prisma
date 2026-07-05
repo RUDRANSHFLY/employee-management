@@ -18,8 +18,11 @@ model User {
   sessions      Session[]
   accounts      Account[]
 
-  role         String? @default("employee")
+  role         String? @default("EMPLOYEE")
   leaveBalance Int?    @default(20)
+
+  // realations
+  leaveRequests LeaveRequest[]
 
   @@unique([email])
   @@map("user")
@@ -71,4 +74,45 @@ model Verification {
 
   @@index([identifier])
   @@map("verification")
+}
+
+enum LeaveStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum LeaveType {
+  CASUAL
+  SICK
+  EARNED
+  UNPAID
+}
+
+model LeaveRequest {
+  id String @id @default(cuid())
+
+  // relation
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // leave details
+  leaveType LeaveType
+  startDate DateTime
+  endDate   DateTime
+  totalDays Int
+
+  // reason
+  reason String @db.Text
+
+  // status
+  status LeaveStatus @default(PENDING)
+
+  //timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@map("leave_request")
 }
