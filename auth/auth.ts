@@ -14,7 +14,7 @@ export const auth = betterAuth({
       role: {
         type: "string",
         required: false,
-        defaultValue: "employee",
+        defaultValue: "EMPLOYEE",
         input: true,
       },
       leaveBalance: {
