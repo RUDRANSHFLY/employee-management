@@ -36,7 +36,7 @@ import {
 
 import { applyForLeave } from "@/server/actions/leave";
 
-const LEAVE_TYPES = ["CASUAL", "SICK", "EARNED", "UNPAID"] as const;
+type LEAVE_TYPES = "CASUAL"| "SICK"| "EARNED"| "UNPAID";
 
 const LEAVE_TYPE_OPTIONS = [
   {
@@ -80,7 +80,7 @@ const LEAVE_TYPE_OPTIONS = [
 export function LeaveApplyForm() {
   const router = useRouter();
 
-  const [leaveType, setLeaveType] = useState<(typeof LEAVE_TYPES)[number]>("CASUAL");
+  const [leaveType, setLeaveType] = useState<LEAVE_TYPES>("CASUAL");
   const [startDate, setStartDate] = useState<Date | undefined>();
   const [endDate, setEndDate] = useState<Date | undefined>();
   const [reason, setReason] = useState("");
@@ -124,8 +124,6 @@ export function LeaveApplyForm() {
 
     router.push("/employee/requests");
   };
-
-  const selectedOption = LEAVE_TYPE_OPTIONS.find(opt => opt.key === leaveType)!;
 
   return (
     <div className="space-y-6 max-w-2xl mx-auto w-full">
