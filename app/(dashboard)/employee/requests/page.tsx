@@ -1,13 +1,19 @@
 import { auth } from "@/auth/auth";
 import { headers } from "next/headers";
 import { prisma } from "@/prisma/prisma";
+import { normalizeRole } from "@/lib/roles";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowLeft, Plus } from "lucide-react";
 import { EmployeeRequestsList } from "@/components/employee";
+import { redirect } from "next/navigation";
 
 export default async function MyRequestsPage() {
   const session = await auth.api.getSession({ headers: await headers() });
+
+  if (normalizeRole(session?.user?.role) === "ADMIN") {
+    redirect("/admin");
+  }
 
   const requests = await prisma.leaveRequest.findMany({
     where: { userId: session!.user.id },
