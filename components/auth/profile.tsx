@@ -4,8 +4,8 @@ import { useSession, signOut } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
 import { LogOut } from "lucide-react";
+import { normalizeRole } from "@/lib/roles";
 
 export function Profile() {
   const { data: session, isPending } = useSession();
@@ -18,21 +18,20 @@ export function Profile() {
 
   if (isPending) {
     return (
-      <Card>
-        <CardContent className="flex items-center gap-3 p-4">
-          <div className="h-10 w-10 rounded-full bg-muted animate-pulse" />
-          <div className="space-y-2">
-            <div className="h-3 w-24 bg-muted rounded animate-pulse" />
-            <div className="h-3 w-16 bg-muted rounded animate-pulse" />
-          </div>
-        </CardContent>
-      </Card>
+      <div className="flex items-center gap-3 rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2">
+        <div className="h-8 w-8 animate-pulse rounded-full bg-white/10" />
+        <div className="hidden space-y-2 sm:block">
+          <div className="h-2.5 w-20 animate-pulse rounded bg-white/10" />
+          <div className="h-2.5 w-14 animate-pulse rounded bg-white/10" />
+        </div>
+      </div>
     );
   }
 
   if (!session) return null;
 
   const { name, role } = session.user as { name: string; role: string };
+  const normalizedRole = normalizeRole(role);
 
   const initials = name
     .split(" ")
@@ -42,32 +41,35 @@ export function Profile() {
     .toUpperCase();
 
   return (
-    <Card>
-      <CardContent className="flex items-center justify-between gap-3 p-4">
-        <div className="flex items-center gap-3">
-          <Avatar>
-            <AvatarFallback>{initials}</AvatarFallback>
-          </Avatar>
-          <div>
-            <p className="text-sm font-medium leading-none">{name}</p>
-            <Badge
-              variant={role === "ADMIN" ? "default" : "secondary"}
-              className="mt-1"
-            >
-              {role}
-            </Badge>
-          </div>
+    <div className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/[0.04] px-2.5 py-2 text-zinc-100">
+      <Avatar className="h-8 w-8">
+        <AvatarFallback className="bg-white text-xs font-bold text-zinc-950">
+          {initials}
+        </AvatarFallback>
+      </Avatar>
+      <div className="hidden min-w-0 sm:block">
+        <p className="max-w-32 truncate text-xs font-semibold leading-none text-white">
+          {name}
+        </p>
+        <div className="mt-1">
+          <Badge
+            variant={normalizedRole === "ADMIN" ? "default" : "secondary"}
+            className="h-4 rounded px-1.5 text-[9px] leading-none"
+          >
+            {normalizedRole}
+          </Badge>
         </div>
+      </div>
 
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={handleSignOut}
-          title="Sign out"
-        >
-          <LogOut className="h-4 w-4" />
-        </Button>
-      </CardContent>
-    </Card>
+      <Button
+        variant="ghost"
+        size="icon-sm"
+        onClick={handleSignOut}
+        title="Sign out"
+        className="text-zinc-300 hover:bg-white/10 hover:text-white"
+      >
+        <LogOut className="h-4 w-4" />
+      </Button>
+    </div>
   );
 }
